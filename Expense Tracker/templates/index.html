@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Signup</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div id="form-container">
+        <h2 id="form-title">Login</h2>
+        <form id="auth-form" action="/login" method="POST">
+            <input type="text" id="signup-username" name="username" placeholder="Username">
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button class="login_but" type="submit">Login</button>
+        </form>
+        <p id="toggle-text">Don't have an account? <a href="signup.html" id="toggle-link">Sign up</a></p>
+        <p id="message"></p>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

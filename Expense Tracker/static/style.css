@@ -1,0 +1,235 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(to right, #a8edea, #fed6e3);
+    margin: 0;
+}
+#logout-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 8px 16px;
+    background-color: #dc3545; 
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 18px;
+    width: 100px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+#logout-btn:hover {
+    background-color: #c82333;
+    transform: scale(1.05);
+}
+
+
+#dashboard-container {
+    background: #fff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    width: 420px;
+    max-height: 90vh;
+    overflow-y: auto;
+    text-align: center;
+}
+#form-container {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: center;
+}
+
+
+h2, h3 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+form, #dashboard-container > div {
+    margin-bottom: 20px;
+}
+
+input, select, button {
+    width: 100%;
+    padding: 10px 12px;
+    margin: 8px 0;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus, select:focus {
+    border-color: #28a745;
+    outline: none;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.4);
+}
+#toggle-text {
+    margin-top: 10px;
+    font-size: 0.9em;
+}
+
+
+button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    font-weight: bold;
+    width: 60%;
+    padding: 8px 10px;
+    font-size: 14px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+button:hover {
+    background-color: #218838;
+    transform: scale(1.02);
+}
+
+#transactions {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.transaction-entry {
+    border-bottom: 1px solid #ccc;
+    padding: 8px 0;
+}
+
+#advice-output, #budget-advice {
+    margin-top: 15px;
+    font-weight: bold;
+    color: #d9534f;
+}
+
+/* body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(to right, #a8edea, #fed6e3);
+    margin: 0;
+    padding: 20px 0;
+}
+
+#logout-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 8px 16px;
+    background-color: #dc3545; 
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 18px;
+    width: 100px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+#logout-btn:hover {
+    background-color: #c82333;
+    transform: scale(1.05);
+}
+
+#dashboard-container {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    margin: 60px auto 20px auto;
+}
+
+.card {
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    padding: 12px 15px;
+}
+
+.card-header h5 {
+    margin: 0;
+    color: #333;
+    font-weight: 600;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+h1, h2, h3, h4, h5 {
+    color: #333;
+}
+
+input, select, button, .form-control, .form-select {
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus, select:focus, .form-control:focus, .form-select:focus {
+    border-color: #28a745;
+    outline: none;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.4);
+}
+
+button, .btn {
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+button:hover, .btn:hover {
+    transform: scale(1.02);
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.transaction-entry {
+    border-bottom: 1px solid #ccc;
+    padding: 8px 0;
+}
+
+#budgetAdvice, #advice-output {
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+}
+
+/
+@media (max-width: 768px) {
+    #dashboard-container {
+        width: 95%;
+        padding: 20px 15px;
+    }
+    
+    .card {
+        margin-bottom: 15px;
+    }
+    
+    .card-body {
+        padding: 15px;
+    }
+} */

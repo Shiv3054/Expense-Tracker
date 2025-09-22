@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .main-content {
+            margin-top: 80px;
+            padding: 20px;
+        }
+        
+        .transaction-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .category-section {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .category-header {
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .transaction-item {
+            background-color: #ffffff;
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .amount {
+            font-weight: bold;
+        }
+        
+        .income {
+            color: #28a745;
+        }
+        
+        .expense {
+            color: #dc3545;
+        }
+        
+        .summary-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .advice-section {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .transaction-table {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+        }
+
+        .filter-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        #getAdviceBtn {
+            white-space: nowrap;
+        }
+        
+        #categoryAdvice {
+            transition: all 0.3s ease;
+        }
+        
+        .budget-stats {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+        
+        .alert {
+            margin-bottom: 10px;
+        }
+        
+        /* Add new styles for enhanced category advice */
+        .transaction-stats {
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .progress {
+            height: 20px;
+        }
+        
+        .progress-bar {
+            transition: width 0.6s ease;
+        }
+        
+        .advice-list {
+            margin-top: 15px;
+        }
+        
+        .advice-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .advice-item:last-child {
+            border-bottom: none;
+        }
+        
+        .trend-indicator {
+            font-size: 1.2em;
+            margin-right: 5px;
+        }
+        
+        .critical-alert {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Expense Tracker</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" id="refreshTransactions">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/manual_entry">Manual Entry</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/csv_upload">CSV Upload</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <button class="btn btn-outline-danger me-2" id="clearTransactionsBtn">Clear All</button>
+                    <button class="btn btn-outline-secondary ms-2" id="logoutBtn">Logout</button>
+    </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="transaction-container">
+            <!-- Summary Section -->
+            <div class="summary-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3>Financial Summary</h3>
+                    <button class="btn btn-primary" id="getAdviceBtn">
+                        <i class="fas fa-lightbulb"></i> Get Advice
+                    </button>
+                </div>
+                <div id="summaryContent"></div>
+        </div>
+        
+            <!-- Advice Section -->
+            <div class="advice-section" id="adviceSection" style="display: none;">
+                <h3>Smart Budget Advice</h3>
+                <div id="adviceContent" class="mt-3"></div>
+            </div>
+            
+            <!-- Filter Section -->
+            <div class="filter-section mb-4">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="filterType" class="form-label">Transaction Type</label>
+                        <select class="form-select" id="filterType">
+                            <option value="all">All Types</option>
+                            <option value="Income">Income</option>
+                            <option value="Expense">Expense</option>
+                        </select>
+            </div>
+                    <div class="col-md-4">
+                        <label for="filterCategory" class="form-label">Category</label>
+                        <select class="form-select" id="filterCategory" style="position: relative; z-index: 1000;">
+                            <option value="all">All Categories</option>
+                            <option value="Housing">Housing</option>
+                            <option value="Transportation">Transportation</option>
+                            <option value="Food">Food</option>
+                            <option value="Cook">Cook</option>
+                            <option value="Utilities">Utilities</option>
+                            <option value="Insurance">Insurance</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Savings">Savings</option>
+                            <option value="Personal">Personal</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Other">Other</option>
+                        </select>
+        </div>
+                    <div class="col-md-4">
+                        <label for="filterDate" class="form-label">Date Range</label>
+                        <select class="form-select" id="filterDate">
+                            <option value="all">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="this_month">This Month</option>
+                        </select>
+            </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Category Advice Section -->
+        <div id="categoryAdvice" style="display: none; position: relative; z-index: 999;"></div>
+        
+        <!-- All Transactions Table -->
+        <div id="mainTransactionsSection" class="mt-4">
+                <div class="table-responsive">
+                <table class="table table-hover">
+                        <thead>
+                            <tr>
+                            <th>Date</th>
+                                <th>Type</th>
+                                <th>Category</th>
+                                <th>Subcategory</th>
+                                <th>Note</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                    <tbody id="transactionsTableBody">
+                        </tbody>
+                    </table>
+            </div>
+        </div>
+        
+        <!-- Category Breakdown -->
+        <div id="categoryTransactions"></div>
+    </div>
+            </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load transactions on page load
+        loadTransactions();
+        
+        // Add event listeners for filters
+        document.getElementById('filterType')?.addEventListener('change', loadTransactions);
+        document.getElementById('filterDate')?.addEventListener('change', loadTransactions);
+        document.getElementById('filterCategory')?.addEventListener('change', handleCategoryChange);
+        
+        // Add other event listeners
+        document.getElementById('clearTransactionsBtn')?.addEventListener('click', async () => {
+            if (!confirm('Are you sure you want to clear all transactions?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/clear_transactions', {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    alert('All transactions cleared');
+                    loadTransactions();
+                } else {
+                    alert('Error clearing transactions');
+                }
+            } catch (error) {
+                alert('Error clearing transactions');
+            }
+        });
+        
+        document.getElementById('logoutBtn')?.addEventListener('click', () => {
+            window.location.href = '/logout';
+        });
+        
+        document.getElementById('getAdviceBtn')?.addEventListener('click', async () => {
+            try {
+                const response = await fetch('/get_budget_advice');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const adviceSection = document.getElementById('adviceSection');
+                    const adviceContent = document.getElementById('adviceContent');
+                    if (adviceSection && adviceContent) {
+                        adviceContent.innerHTML = data.advice.replace(/\n/g, '<br>');
+                        adviceSection.style.display = 'block';
+                    }
+                } else {
+                    alert(data.error || 'Error getting advice');
+                }
+            } catch (error) {
+                alert('Error getting advice');
+            }
+        });
+    });
+
+    async function loadTransactions() {
+        try {
+            const filterType = document.getElementById('filterType').value;
+            const filterDate = document.getElementById('filterDate').value;
+            const filterCategory = document.getElementById('filterCategory').value;
+            
+            const queryParams = new URLSearchParams({
+                type: filterType,
+                date_filter: filterDate,
+                category: filterCategory
+            });
+            
+            const response = await fetch(`/get_transactions?${queryParams}`);
+            const data = await response.json();
+            
+            if (response.ok) {
+                displayTransactions(data);
+                updateCategoryDropdown(data.category_breakdown);
+            } else {
+                alert(data.error || 'Error loading transactions');
+            }
+        } catch (error) {
+            console.error('Error loading transactions:', error);
+            alert('Error loading transactions');
+        }
+    }
+
+    function displayTransactions(data) {
+        try {
+            // Display summary
+            const summaryContent = document.getElementById('summaryContent');
+            if (summaryContent) {
+                summaryContent.innerHTML = `
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h5>Total Income</h5>
+                            <p class="amount income">₹${data.summary?.total_income?.toFixed(2) || '0.00'}</p>
+                </div>
+                        <div class="col-md-4">
+                            <h5>Total Expenses</h5>
+                            <p class="amount expense">₹${data.summary?.total_expenses?.toFixed(2) || '0.00'}</p>
+            </div>
+                        <div class="col-md-4">
+                            <h5>Net Savings</h5>
+                            <p class="amount ${data.summary?.net_savings >= 0 ? 'income' : 'expense'}">
+                                ₹${data.summary?.net_savings?.toFixed(2) || '0.00'}
+                            </p>
+        </div>
+    </div>
+                `;
+            }
+
+            // Update transactions table
+            const tableBody = document.getElementById('transactionsTableBody');
+            if (tableBody) {
+                let tableHtml = '';
+                
+                if (data.transactions && data.transactions.length > 0) {
+                    data.transactions.forEach(t => {
+                        const date = new Date(t.date).toLocaleDateString();
+                        tableHtml += `
+                            <tr>
+                                <td>${date}</td>
+                                <td>${t.type}</td>
+                                <td>${t.category}</td>
+                                <td>${t.subcategory || '-'}</td>
+                                <td>${t.note || '-'}</td>
+                                <td class="amount ${t.type.toLowerCase()}">
+                                    ${t.type === 'Income' ? '+' : '-'}₹${t.amount.toFixed(2)}
+                                </td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    tableHtml = '<tr><td colspan="6" class="text-center">No transactions found</td></tr>';
+                }
+                
+                tableBody.innerHTML = tableHtml;
+            }
+        } catch (error) {
+            console.error('Error displaying transactions:', error);
+        }
+    }
+
+    function updateCategoryDropdown(categoryBreakdown) {
+        const filterCategory = document.getElementById('filterCategory');
+        if (!filterCategory) return;
+
+        // Store current selection
+        const currentSelection = filterCategory.value;
+
+        // Clear existing options except "All Categories"
+        while (filterCategory.options.length > 1) {
+            filterCategory.remove(1);
+        }
+
+        // Add categories from breakdown
+        const categories = new Set();
+        for (const key in categoryBreakdown) {
+            categories.add(categoryBreakdown[key].category);
+        }
+
+        categories.forEach(category => {
+            const option = new Option(category, category);
+            filterCategory.add(option);
+        });
+
+        // Restore previous selection if it still exists
+        if (currentSelection && Array.from(categories).includes(currentSelection)) {
+            filterCategory.value = currentSelection;
+        }
+    }
+
+    // Add helper functions before handleCategoryChange
+    function getProgressBarClass(status) {
+        switch (status) {
+            case 'critical':
+                return 'bg-danger';
+            case 'warning':
+                return 'bg-warning';
+            case 'notice':
+                return 'bg-info';
+            default:
+                return 'bg-success';
+        }
+    }
+
+    function getAlertClass(status) {
+        switch (status) {
+            case 'critical':
+                return 'danger';
+            case 'warning':
+                return 'warning';
+            case 'notice':
+                return 'info';
+            default:
+                return 'success';
+        }
+    }
+
+    function getThresholdWarning(percentage, category) {
+        if (percentage >= 90) {
+            return `<br><strong>⚠️ Critical Alert:</strong> You have almost reached your ${category} budget limit!`;
+        } else if (percentage >= 75) {
+            return `<br><strong>⚠️ Warning:</strong> You are approaching your ${category} budget limit.`;
+        } else if (percentage >= 50) {
+            return `<br><strong>ℹ️ Notice:</strong> You have used more than half of your ${category} budget.`;
+        }
+        return '';
+    }
+
+    async function handleCategoryChange(event) {
+        const category = event.target.value;
+        const categoryAdvice = document.getElementById('categoryAdvice');
+        const mainTransactionsSection = document.getElementById('mainTransactionsSection');
+
+        try {
+            if (category === 'all') {
+                if (categoryAdvice) categoryAdvice.style.display = 'none';
+                if (mainTransactionsSection) mainTransactionsSection.style.display = 'block';
+                await loadTransactions();
+                return;
+            }
+
+            // Show loading state
+            if (categoryAdvice) {
+                categoryAdvice.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"></div><p>Loading category analysis...</p></div>';
+                categoryAdvice.style.display = 'block';
+            }
+
+            // Get category advice
+            const adviceResponse = await fetch(`/get_category_advice?category=${encodeURIComponent(category)}`);
+            const adviceData = await adviceResponse.json();
+
+            if (!adviceResponse.ok) {
+                throw new Error(adviceData.error || 'Failed to get category advice');
+            }
+
+            // Calculate percentage based on category-specific threshold
+            const percentageUsed = ((adviceData.current_spent / adviceData.total_income) * 100).toFixed(1);
+            const warningThreshold = adviceData.warning_threshold || 75;
+            const criticalThreshold = adviceData.critical_threshold || 90;
+
+            // Update category advice section
+            if (categoryAdvice) {
+                categoryAdvice.innerHTML = `
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h4 class="card-title">${category} - Budget Analysis</h4>
+                            <div class="budget-stats">
+                                <p><strong>Current Spending:</strong> ₹${adviceData.current_spent.toLocaleString('en-IN', {maximumFractionDigits: 2})}</p>
+                                <p><strong>Monthly Threshold:</strong> ₹${adviceData.threshold.toLocaleString('en-IN', {maximumFractionDigits: 2})}</p>
+                                ${adviceData.historical_average ? `<p><strong>Historical Average:</strong> ₹${adviceData.historical_average.toLocaleString('en-IN', {maximumFractionDigits: 2})}</p>` : ''}
+                                
+                                <div class="mt-3">
+                                    <label class="form-label">Budget Usage: ${percentageUsed}%</label>
+                                    <div class="progress">
+                                        <div class="progress-bar ${getProgressBarClass(adviceData.status)}" 
+                                             role="progressbar" 
+                                             style="width: ${Math.min(percentageUsed, 100)}%"
+                                             aria-valuenow="${percentageUsed}" 
+                                             aria-valuemin="0" 
+                                             aria-valuemax="100">
+                                             ${percentageUsed}%
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-2">
+                                    <small class="text-muted">
+                                        Warning Level: ${warningThreshold}% | Critical Level: ${criticalThreshold}%
+                                    </small>
+                                </div>
+                            </div>
+                            
+                           <div class="alert alert-${getAlertClass(adviceData.status)} mt-3">
+                                ${adviceData.message || 'No specific advice available for this category.'}
+                                ${getThresholdWarning(percentageUsed, category)}
+                            </div>
+                            ${adviceData.trend ? `<div class="alert alert-info mt-2">${adviceData.trend}</div>` : ''}
+                            ${adviceData.advice && adviceData.advice.length > 0 ? `
+                                <div class="mt-3">
+                                    <h5>Recommendations:</h5>
+                                    <ul class="list-unstyled">
+                                        ${adviceData.advice.map(tip => `<li>• ${tip}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+                categoryAdvice.style.display = 'block';
+            }
+
+            // Load filtered transactions
+            if (mainTransactionsSection) {
+                mainTransactionsSection.style.display = 'block';
+            }
+            await loadTransactions();
+
+        } catch (error) {
+            console.error('Error handling category change:', error);
+            if (categoryAdvice) {
+                categoryAdvice.innerHTML = `
+                    <div class="alert alert-danger">
+                        <h5>Error</h5>
+                        <p>Failed to load category analysis. Please try again later.</p>
+                        <p class="text-muted small">${error.message}</p>
+                    </div>
+                `;
+                categoryAdvice.style.display = 'block';
+            }
+            // Still try to load transactions even if advice fails
+            if (mainTransactionsSection) {
+                mainTransactionsSection.style.display = 'block';
+            }
+            await loadTransactions();
+        }
+    }
+</script>
+</body>
+</html> 
